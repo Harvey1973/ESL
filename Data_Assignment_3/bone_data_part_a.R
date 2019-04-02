@@ -146,7 +146,7 @@ for (i in B){
   smooth_boot <- smooth.spline(x_train,y_train,cv = FALSE,all.knots = TRUE)
   yhat_boot = predict(smooth_boot,sort(x_train))$y
   plot_df = as.data.frame(cbind(sort(x_train),sort(y_train),yhat_boot))
-  gg =  gg + geom_line(aes(sort(x_train),yhat_boot),plot_df,color = col_vector[i])
+  gg =  gg + geom_line(aes(sort(x_train),yhat_boot),plot_df,color = col_vector[i+10])
   
 }
 gg + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)
