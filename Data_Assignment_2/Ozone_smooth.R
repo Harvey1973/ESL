@@ -48,7 +48,7 @@ plot_df = as.data.frame(cbind(xTrain_sorted,
 
 #plot_df
 
-ggplot() + geom_line(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
+ggplot() + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
   geom_line(aes(xTrain_sorted,low),plot_df,color = "blue")+geom_line(aes(xTrain_sorted,high),plot_df,color = "blue")+
   labs(y= "ozone", x = "radiation") 
 
@@ -104,7 +104,7 @@ plot_df = as.data.frame(cbind(xTrain_sorted,
 
 #plot_df
 
-ggplot() + geom_line(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
+ggplot() + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
   geom_line(aes(xTrain_sorted,low),plot_df,color = "blue")+geom_line(aes(xTrain_sorted,high),plot_df,color = "blue")+
   labs(y= "ozone", x = "temperature") 
 
@@ -159,6 +159,6 @@ plot_df = as.data.frame(cbind(xTrain_sorted,
 
 #plot_df
 
-ggplot() + geom_line(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
+ggplot() + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
   geom_line(aes(xTrain_sorted,low),plot_df,color = "blue")+geom_line(aes(xTrain_sorted,high),plot_df,color = "blue")+
   labs(y= "ozone", x = "wind") 
