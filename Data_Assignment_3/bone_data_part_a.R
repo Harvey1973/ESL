@@ -1,5 +1,5 @@
 # Load dataset 
-bone_data=read.table("C:/Users/Harvey/Desktop/MA751/Data_Assignment_3/bone.data",sep="", header = TRUE)
+bone_data=read.table("/Users/harvey/Desktop/ESL/Data_Assignment_3/bone.data",sep="", header = TRUE)
 
 # load training examples (predictor :age)
 age = bone_data$age
@@ -59,21 +59,24 @@ plot_df = as.data.frame(cbind(xTrain_sorted,
 
 #plot_df
 
-ggplot() + geom_line(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
+ggplot() + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(xTrain_sorted,yhat),plot_df,color = "red")+
   geom_line(aes(xTrain_sorted,low),plot_df,color = "blue")+geom_line(aes(xTrain_sorted,high),plot_df,color = "blue")+
   labs(y= "spnbmd", x = "age") 
 
 
 #################################################
 # Part b 
-
-H = ns(train,knots = sort(train)[1:484])
+#df = 483
+#H = ns(train,knots = sort(train)[1:484])
+#H = ns(train,knots = sort(unique(train))[2:238])
+H = ns(train,df = df)
 df_2=data.frame(yTrain,H)
 regression = lm(yTrain~.,data = df_2)
 yhat = predict(regression,data.frame(cbind(1,H)))
+
 sigma = (t(yTrain - yhat)%*%(yTrain - yhat))/N
 tao = 0.000939
-prior_sigma = 1*diag(N)
+prior_sigma = 1*diag(dim(H)[2])
 posterior_mean = H%*%(solve(t(H)%*%(H) + 
                     (sigma[1]/tao)*solve(prior_sigma)))%*%t(H)%*%yTrain
 posterior_cov = H%*%(solve(t(H)%*%(H) + 
@@ -85,7 +88,7 @@ high = posterior_mean + 1.65*sqrt(diag(posterior_cov))
 plot_df = as.data.frame(cbind(train,
                               posterior_mean,high,low,yTrain))
 
-ggplot() + geom_line(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_df,color = "red")+
+ggplot() + geom_point(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_df,color = "red")+
   geom_line(aes(train,V3),plot_df,color = "blue")+geom_line(aes(train,V4),plot_df,color = "blue")+
   labs(y= "spnbmd", x = "age") 
 
@@ -116,7 +119,7 @@ high = posterior_mean_2 + 1.65*sqrt(diag(posterior_cov_2))
 plot_df = as.data.frame(cbind(train,
                               posterior_mean_2,high,low,yTrain))
 
-ggplot() + geom_line(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_df,color = "red")+
+ggplot() + geom_point(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_df,color = "red")+
   geom_line(aes(train,V3),plot_df,color = "blue")+geom_line(aes(train,V4),plot_df,color = "blue")+
   labs(y= "spnbmd", x = "age") 
 
@@ -125,6 +128,11 @@ ggplot() + geom_line(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_df
 ####################################################
 # part c
 # Step 1 sample with replacement
+library(RColorBrewer)
+n <- 60
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+
 x_y_data = cbind(train,yTrain)
 
 ind = c(1:N)
@@ -138,8 +146,8 @@ for (i in B){
   smooth_boot <- smooth.spline(x_train,y_train,cv = FALSE,all.knots = TRUE)
   yhat_boot = predict(smooth_boot,sort(x_train))$y
   plot_df = as.data.frame(cbind(sort(x_train),sort(y_train),yhat_boot))
-  gg =  gg + geom_line(aes(sort(x_train),yhat_boot),plot_df,color = "red")
+  gg =  gg + geom_line(aes(sort(x_train),yhat_boot),plot_df,color = col_vector[i])
   
 }
-gg + geom_line(aes(xTrain_sorted,yTrain_sorted),plot_df)
+gg + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)
 
