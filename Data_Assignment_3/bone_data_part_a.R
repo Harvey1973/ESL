@@ -1,5 +1,7 @@
+library(RColorBrewer)
+library(ggplot2)
 # Load dataset 
-bone_data=read.table("/Users/harvey/Desktop/ESL/Data_Assignment_3/bone.data",sep="", header = TRUE)
+bone_data=read.table("C:/Users/Harvey/Desktop/ESL/Data_Assignment_3/bone.data",sep="", header = TRUE)
 
 # load training examples (predictor :age)
 age = bone_data$age
@@ -29,7 +31,7 @@ L = matrix(0,nrow = length(train), ncol = length(train))
 for(j in 1:length(train)){
   yi = rep_len(0, length(train))
   yi[j] = 1
-  L[,j] = predict(smooth.spline(train, yi, lambda  = smooth_1$lambda, cv=FALSE,
+  L[,j] = predict(smooth.spline(sort(train), yi, lambda  = smooth_1$lambda, cv=FALSE,
                                 all.knots = TRUE), sort(age))$y
 }
 
@@ -68,14 +70,14 @@ ggplot() + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)+ geom_line(aes(x
 # Part b 
 #df = 483
 #H = ns(train,knots = sort(train)[1:484])
-#H = ns(train,knots = sort(unique(train))[2:238])
-H = ns(train,df = df)
+H = ns(train,knots = sort(unique(train))[2:238])
+#H = ns(train,df = df)
 df_2=data.frame(yTrain,H)
 regression = lm(yTrain~.,data = df_2)
 yhat = predict(regression,data.frame(cbind(1,H)))
 
 sigma = (t(yTrain - yhat)%*%(yTrain - yhat))/N
-tao = 0.000939
+tao = 0.000737
 prior_sigma = 1*diag(dim(H)[2])
 posterior_mean = H%*%(solve(t(H)%*%(H) + 
                     (sigma[1]/tao)*solve(prior_sigma)))%*%t(H)%*%yTrain
@@ -128,7 +130,7 @@ ggplot() + geom_point(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_d
 ####################################################
 # part c
 # Step 1 sample with replacement
-library(RColorBrewer)
+
 n <- 60
 qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
