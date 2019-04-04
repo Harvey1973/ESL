@@ -1,7 +1,8 @@
 library(RColorBrewer)
 library(ggplot2)
+library(splines)
 # Load dataset 
-bone_data=read.table("C:/Users/Harvey/Desktop/ESL/Data_Assignment_3/bone.data",sep="", header = TRUE)
+bone_data=read.table("/Users/harvey/Desktop/ESL/Data_Assignment_3/bone.data",sep="", header = TRUE)
 
 # load training examples (predictor :age)
 age = bone_data$age
@@ -21,6 +22,7 @@ smooth_1 <- smooth.spline(train,yTrain,cv = FALSE,all.knots = TRUE)
 smooth_1$lambda
 x_value = smooth_1$x
 fitted_y = smooth_1$y   # for distinct x values
+cv_score = smooth_1$cv.crit
 yhat = predict(smooth.spline(train,yTrain,cv=FALSE,all.knots = TRUE),sort(train))$y
 
 ##############################################
@@ -131,7 +133,7 @@ ggplot() + geom_point(aes(train,yTrain),plot_df)+ geom_line(aes(train,V2),plot_d
 # part c
 # Step 1 sample with replacement
 
-n <- 60
+#n <- 60
 qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
 
@@ -140,16 +142,18 @@ x_y_data = cbind(train,yTrain)
 ind = c(1:N)
 B = c(1:10)
 gg = ggplot()
+avg_cv = 0
 for (i in B){
   sample_ind = sample(ind,replace = TRUE)
   boot_strap_data = x_y_data[sample_ind,]
   x_train = boot_strap_data[,1]
-  y_train = boot_strap_data[,2]
+  y_train = boot_strap_data[,2] + rnorm(N,0,0.00162)
   smooth_boot <- smooth.spline(x_train,y_train,cv = FALSE,all.knots = TRUE)
+  avg_cv = avg_cv +  smooth_boot$cv.crit
   yhat_boot = predict(smooth_boot,sort(x_train))$y
   plot_df = as.data.frame(cbind(sort(x_train),sort(y_train),yhat_boot))
   gg =  gg + geom_line(aes(sort(x_train),yhat_boot),plot_df,color = col_vector[i+10])
   
 }
 gg + geom_point(aes(xTrain_sorted,yTrain_sorted),plot_df)
-
+avg_cv/length(B)
