@@ -146,8 +146,10 @@ avg_cv = 0
 for (i in B){
   sample_ind = sample(ind,replace = TRUE)
   boot_strap_data = x_y_data[sample_ind,]
+  #x_train = sort(boot_strap_data[,1])
   x_train = boot_strap_data[,1]
-  y_train = boot_strap_data[,2] + rnorm(N,0,0.00162)
+  #y_train = predict(smooth_1,x_train)$y + rnorm(N,0,0.00162)
+  y_train = boot_strap_data[,2] 
   smooth_boot <- smooth.spline(x_train,y_train,cv = FALSE,all.knots = TRUE)
   avg_cv = avg_cv +  smooth_boot$cv.crit
   yhat_boot = predict(smooth_boot,sort(x_train))$y
